@@ -35,4 +35,5 @@ def get_all_data(my_path, my_image_width):
 
 x, y = get_all_data('/home/foo/data/blend-new/dataset_cube/images', 32)
 print(y.shape)
+
 #print(files[66])
