@@ -21,13 +21,13 @@ def make_generator(my_image_width):
     hidden1 =  Dense(15, activation='relu')(loc_rot_and_light)
     hidden2 = Dense(100, activation='relu')(hidden1)
     bn = BatchNormalization()(hidden2)
-    square = Dense(my_image_width * my_image_width * 5, activation='sigmoid')(bn)
-    reshaped = Reshape((my_image_width, my_image_width, 5))(square)
-    conv1 = Conv2D(8, (3, 3), padding='same', activation='sigmoid')(reshaped)
-    conv2 = Conv2D(1, (2, 2), padding='same', activation='sigmoid')(conv1)
-    reshaped2 = Reshape((my_image_width, my_image_width))(conv2)
+    square = Dense(my_image_width * my_image_width * 1, activation='relu')(bn)
+    reshaped = Reshape((my_image_width, my_image_width))(square)
+    #conv1 = Conv2D(16, (3, 3), padding='same', activation='relu')(reshaped)
+    #conv2 = Conv2D(1, (2, 2), padding='same', activation='sigmoid')(conv1)
+    reshaped2 = Reshape((my_image_width, my_image_width))(square)
 
-    model = Model(inputs=loc_rot_and_light, outputs=reshaped2)
+    model = Model(inputs=loc_rot_and_light, outputs=reshaped)
     print(model.summary())
     return model
 
@@ -50,11 +50,11 @@ print('Total Samples: ', str(x.shape[0]))
 gen = make_generator(image_width)
 
 #opt = SGD()
-opt = Adadelta()
+opt = Adam()#Adadelta()
 gen.compile(loss='mean_squared_error', optimizer=opt)
 
 for super_epoch in range(0,5000):
-    gen.fit(x, y, epochs=50, batch_size=128, verbose=1, validation_split=.25)
+    gen.fit(x, y, epochs=25, batch_size=128, verbose=1, validation_split=.25)
 
     write_prediction(gen, super_epoch, output_directory)
 
